@@ -5,12 +5,7 @@
 
 ## Goal: Extraction & analysis of the political communication of selected political actors on Czech social media
 
-### Data: Obtained from [Hlídač Státu](https://www.hlidacstatu.cz/), dataset [Vyjádření politiků](https://www.hlidacstatu.cz/data/Index/vyjadreni-politiku), which has been constructed through the cooperation with [Apify](apify.com)
-
-### Monitored social media profiles of politicians:
-
-| **POLITICAL SUBJECT**                 | 
-| :---                                  | 
-|                                       | 
-
+### Data: 
+- FACEBOOK & YOUTUBE: Obtained from [Hlídač Státu](https://www.hlidacstatu.cz/), dataset [Vyjádření politiků](https://www.hlidacstatu.cz/data/Index/vyjadreni-politiku), which has been constructed through the cooperation with [Apify](apify.com)
+- TWITTER: Through Twitter API
 
