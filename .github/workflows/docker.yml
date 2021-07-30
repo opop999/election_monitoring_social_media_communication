@@ -24,12 +24,12 @@ jobs:
     - name: Extract all yesterday's FB Posts from Hlidac Statu
     # This action needs a Hlidac Statu API token as an environment variable (we are using GitHub Secrets)
       env:
-          FB_TOKEN: ${{ secrets.HS_TOKEN }}
+          HS_TOKEN: ${{ secrets.HS_TOKEN }}
       run: Rscript 01_fb_yesterday_extract.R
     - name: Extract all yesterday's YT content from Hlidac Statu
      # This action needs a Hlidac Statu API token as an environment variable (we are using GitHub Secrets)
       env:
-          FB_TOKEN: ${{ secrets.HS_TOKEN }}
+          HS_TOKEN: ${{ secrets.HS_TOKEN }}
       run: Rscript 01_yt_yesterday_extract.R
     # TO BE WORKED ON
     # - name: Create summary tables
