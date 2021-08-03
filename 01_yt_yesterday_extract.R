@@ -3,7 +3,7 @@
 ## 1. Loading the required R libraries
 
 # Package names
-packages <- c("httr", "data.table", "arrow", "dplyr", "jsonlite")
+packages <- c("httr", "data.table", "arrow", "dplyr", "jsonlite", "purrr")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -75,21 +75,34 @@ yt_posts_yesterday <- function(server, start_date, end_date, dir_name, sort, des
     yesterday_data <- bind_rows(yesterday_data, result_df)
   }
 
-  # We are saving the merged dataframes with yesterday's data as CSV and RDS file (for speed in R)
-  fwrite(x = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".csv"))
-  saveRDS(object = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".rds"), compress = FALSE)
+  # Apply transformation, if dataset is Youtube and is not empty to unlist list columns
 
-  # Load in the existing full dataset merge with yesterday's new data
-  all_data <- readRDS(paste0(dir_name, "/all_data_", tolower(server), ".rds"))
+  if (server == "Youtube" & !dim(yesterday_data)[1] == 0) {
+    yesterday_data <- yesterday_data %>%
+      mutate(
+        prepisAudia = map_chr(prepisAudia, paste0, collapse = " "),
+        tags = map_chr(tags, paste0, collapse = " ")
+      )
 
-  # Append the existing dataset with new rows from yesterday and delete duplicates
-  all_data <- bind_rows(yesterday_data, all_data) %>% distinct()
+    # We are saving the merged dataframes with yesterday's data as CSV and RDS file (for speed in R)
+    fwrite(x = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".csv"))
+    saveRDS(object = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".rds"), compress = FALSE)
 
-  # Save full dataset again both in CSV, RDS and also Arrow/Feather binary format
-  saveRDS(object = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)
-  fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
-  write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), ".feather"))
+    # Load in the existing full dataset merge with yesterday's new data
+    all_data <- readRDS(paste0(dir_name, "/all_data_", tolower(server), ".rds"))
 
+    # Append the existing dataset with new rows from yesterday and delete duplicates
+    all_data <- bind_rows(yesterday_data, all_data) %>% distinct()
+
+    # Save full dataset again both in CSV, RDS and also Arrow/Feather binary format
+    saveRDS(object = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)
+    fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
+    write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), ".feather"))
+  } else if (server == "Youtube" & dim(yesterday_data)[1] == 0) {
+    print("YT dataset from yesterday is empty, no need to append")
+  } else if (server == "Facebook") {
+    print("FB dataset does not have columns to be flattened")
+  }
 }
 
 ## 3. Inputs for the function
