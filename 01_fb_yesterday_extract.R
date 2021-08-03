@@ -75,20 +75,26 @@ fb_posts_yesterday <- function(server, start_date, end_date, dir_name, sort, des
     yesterday_data <- bind_rows(yesterday_data, result_df)
   }
 
-  # We are saving the merged dataframes with yesterday's data as CSV and RDS file (for speed in R)
-  fwrite(x = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".csv"))
-  saveRDS(object = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".rds"), compress = FALSE)
+  # Only append the full dataset if there are records from yesterday
+  if (server == "Facebook" & !dim(yesterday_data)[1] == 0) {
+    # We are saving the merged dataframes with yesterday's data as CSV and RDS file (for speed in R)
+    fwrite(x = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".csv"))
+    saveRDS(object = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".rds"), compress = FALSE)
 
-  # Load in the existing full dataset merge with yesterday's new data
-  all_data <- readRDS(paste0(dir_name, "/all_data_", tolower(server), ".rds"))
+    # Load in the existing full dataset merge with yesterday's new data
+    all_data <- readRDS(paste0(dir_name, "/all_data_", tolower(server), ".rds"))
 
-  # Append the existing dataset with new rows from yesterday and delete duplicates
-  all_data <- bind_rows(yesterday_data, all_data) %>% distinct()
+    # Append the existing dataset with new rows from yesterday and delete duplicates
+    all_data <- bind_rows(yesterday_data, all_data) %>% distinct()
 
-  # Save full dataset again both in CSV, RDS and also Arrow/Feather binary format
-  saveRDS(object = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)
-  fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
-  write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), ".feather"))
+    # Save full dataset again both in CSV, RDS and also Arrow/Feather binary format
+    saveRDS(object = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)
+    fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
+    write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), ".feather"))
+
+  } else if (server == "Facebook" & dim(yesterday_data)[1] == 0) {
+    print("FB dataset from yesterday is empty, no need to append")
+  }
 
 }
 

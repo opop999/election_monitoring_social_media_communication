@@ -98,6 +98,7 @@ yt_posts_yesterday <- function(server, start_date, end_date, dir_name, sort, des
     saveRDS(object = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)
     fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
     write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), ".feather"))
+
   } else if (server == "Youtube" & dim(yesterday_data)[1] == 0) {
     print("YT dataset from yesterday is empty, no need to append")
   } else if (server == "Facebook") {
