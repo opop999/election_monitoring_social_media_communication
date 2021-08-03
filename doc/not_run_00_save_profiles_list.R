@@ -4,7 +4,19 @@
 
 # See the readme.md for the currently monitored pages
 
-personal_id <- c("karel-havlicek-3",
+# We have to create a desired directory, if one does not yet exist
+
+if (!dir.exists("data")) {
+	dir.create("data")
+} else {
+	print("Output directory already exists")
+}
+
+
+
+# PROFILES IN HLIDAC STATU DATABASE
+
+hlidac_id <- c("karel-havlicek-3",
 								 "andrej-babis",
 								 "tomio-okamura",
 								 "vaclav-klaus-2",
@@ -21,11 +33,22 @@ personal_id <- c("karel-havlicek-3",
 								 "jan-hamacek",
 								 "petr-fiala")
 
-# We have to create a desired directory, if one does not yet exist
-if (!dir.exists("data")) {
-  dir.create("data")
-} else {
-  print("Output directory already exists")
-}
 
-saveRDS(personal_id, "data/personal_id.rds", compress = FALSE)
+saveRDS(hlidac_id, "data/hlidac_id.rds", compress = FALSE)
+
+# TWITTER HANDLES FOR TWITTER API
+twitter_id <- c("AndrejBabis",
+							 "tomio_cz",
+								"alenaschillerov",
+								"KarelHavlicek_",
+								"vojtafilip",
+								"Vit_Rakusan",
+								"jhamacek")
+
+
+sum(nchar(twitter_id)) <= 1024 # Should be less then 1024 for twitter query
+
+
+saveRDS(twitter_id, "data/twitter_id.rds", compress = FALSE)
+
+

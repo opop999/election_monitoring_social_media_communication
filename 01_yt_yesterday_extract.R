@@ -3,7 +3,7 @@
 ## 1. Loading the required R libraries
 
 # Package names
-packages <- c("httr", "readr", "dplyr", "jsonlite")
+packages <- c("httr", "data.table", "arrow", "dplyr", "jsonlite")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -76,7 +76,7 @@ yt_posts_yesterday <- function(server, start_date, end_date, dir_name, sort, des
   }
 
   # We are saving the merged dataframes with yesterday's data as CSV and RDS file (for speed in R)
-  write_excel_csv(x = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".csv"))
+  fwrite(x = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".csv"))
   saveRDS(object = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".rds"), compress = FALSE)
 
   # Load in the existing full dataset merge with yesterday's new data
@@ -85,12 +85,14 @@ yt_posts_yesterday <- function(server, start_date, end_date, dir_name, sort, des
   # Append the existing dataset with new rows from yesterday and delete duplicates
   all_data <- bind_rows(yesterday_data, all_data) %>% distinct()
 
-  # Save full dataset again both in CSV and RDS
+  # Save full dataset again both in CSV, RDS and also Arrow/Feather binary format
   saveRDS(object = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)
-  write_excel_csv(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
+  fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
+  write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), ".feather"))
+
 }
 
-## 3. Inputs for the FIO scraping function
+## 3. Inputs for the function
 dir_name <- "data" # Specify the folder, where the tables will be saved
 
 server <- "Youtube" # Could be "Youtube", "Twitter", Facebook"

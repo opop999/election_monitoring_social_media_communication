@@ -7,7 +7,7 @@
 ## 1. Loading the required R libraries
 
 # Package names
-packages <- c("httr", "readr", "dplyr", "jsonlite")
+packages <- c("httr", "dplyr", "jsonlite")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -17,7 +17,6 @@ if (any(installed_packages == FALSE)) {
 
 # Packages loading
 invisible(lapply(packages, library, character.only = TRUE))
-
 
 ## 2. Function for the extraction of FB and YT content
 
@@ -64,21 +63,38 @@ get_all_paginated <- function(server, start_date, end_date, dir_name, sort, desc
     )[[1]] / 25
   )
 
+
+  if (pages <= 200) {
+
+    for (i in seq_len(pages)[seq_len(pages) <= 200]) {
+
+      # Formulate url for the GET request for Facebook from all the timeframe
+      paginated_url_call <- paste0(url_call, "&strana=", i)
+
+      # Send GET request to the API of Hlidac Statu
+      result_raw <- GET(paginated_url_call, add_headers("Authorization" = Sys.getenv("HS_TOKEN")))
+
+      # Transform JSON output to a dataframe
+      result_df <- fromJSON(content(result_raw, as = "text"))[[3]]
+
+      all_data <- bind_rows(all_data, result_df)
+
+    } else if (pages > 200) {
+
+      total_runs <- ceiling(pages/200)
+
+
+      #### API CANNOT REQUEST PAGE HIGHER THAN 200
+      #### FINISH THE FUNCTION, SO IT TAKES THE OLDEST DATE FROM THE DATASET AND
+      #### INPUTS IT AS AN END DATE, UNTIL THE NUMBER OF PAGES IS 0
+
+
+  }
+
+}
+
   # Unfortunately, Hlidac's API supports an upper limit of 200 pages so we have to
   # set an upper hard limit
-  for (i in seq_len(pages)[seq_len(pages) <= 200]) {
-
-    # Formulate url for the GET request for Facebook from all the timeframe
-    paginated_url_call <- paste0(url_call, "&strana=", i)
-
-    # Send GET request to the API of Hlidac Statu
-    result_raw <- GET(paginated_url_call, add_headers("Authorization" = Sys.getenv("HS_TOKEN")))
-
-    # Transform JSON output to a dataframe
-    result_df <- fromJSON(content(result_raw, as = "text"))[[3]]
-
-    all_data <- bind_rows(all_data, result_df)
-  }
 
   saveRDS(object = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)
 }
@@ -86,7 +102,7 @@ get_all_paginated <- function(server, start_date, end_date, dir_name, sort, desc
 
 ## 3. Inputs for the function
 
-server <- "Youtube" # Could be "Youtube", "Twitter", Facebook"
+server <- "Facebook" # Could be "Youtube", "Twitter", Facebook"
 
 start_date <- "2021-01-01" # YYYY-MM-DD or "*" to include everything until the end/beginning
 

@@ -1,0 +1,232 @@
+---
+title: "SOCIAL MEDIA POLITICAL COMMUNICATION"
+date: "Last updated `r format(Sys.time(),'%d. %m. %Y')`"
+author: "Ondrej Pekacek/TI CZ"
+output: 
+  flexdashboard::flex_dashboard:
+    logo: "data/logo_ti.png"
+    theme: cosmo
+    orientation: columns
+    vertical_layout: fill
+    source_code: https://github.com/opop999/election_monitoring_social_media_communication
+    navbar:
+      - {title: "About Project", icon: "ion-information-circled", href: "https://www.transparentnivolby.cz/snemovna2021"}
+      - {title: "About Author", icon: "ion-social-linkedin", href: "https://www.linkedin.com/in/ondrej-pekacek"}
+      - {title: "Data: HLIDAC STATU", icon: "ion-cloud", href: "https://www.hlidacstatu.cz/data/Index/vyjadreni-politiku"}
+---
+
+```{r setup, include=FALSE}
+# Disable scientific notation of numbers
+options(scipen = 999)
+
+# Package names
+packages <- c("dplyr", "ggplot2", "plotly", "htmlwidgets", "stringr")
+
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+
+# Import summary datasets
+summary_dataset_yt <- readRDS(file = "data/summary_tables/total_summary_yt.rds")
+summary_dataset_fb <- readRDS(file = "data/summary_tables/total_summary_fb.rds")
+
+time_dataset_yt <- readRDS(file = "data/summary_tables/time_summary_yt.rds")
+time_dataset_fb <- readRDS(file = "data/summary_tables/time_summary_fb.rds")
+
+# Specify output directory for individual plots
+directory <- "data/html_plots"
+
+# Check whether output directory exists to save individual plots
+if (!dir.exists(directory)) {
+  dir.create(directory)
+} else {
+  print("Output directory already exists")
+}
+
+# Election date for vertical line in the time-plots
+election_date <- as.Date("2021-10-08")
+
+# Graph zoom date end & beginning
+start_date <- as.Date("2021-01-01")
+end_date <- as.Date("2021-11-05")
+
+```
+
+Total FB posts
+=====================================
+
+Column
+-----------------------------------------------------------------------
+
+### Total posts on public Facebook Pages
+
+```{r}
+plot_summary_dataset_fb <- ggplotly(
+  summary_dataset_fb %>%
+    ggplot(aes(x = total_posts, y = reorder(entity_name, total_posts), fill = words_per_post)) +
+    geom_col() +
+    scale_fill_gradient2(
+      low = "#e24a3c", high = "#db1d0b",
+    ) +
+    scale_x_continuous(
+      breaks = seq(0, 10000, 250),
+      labels = seq(0, 10000, 250)
+    ) +
+    scale_y_discrete(labels = (levels(reorder(summary_dataset_fb$entity_name, summary_dataset_fb$total_posts)) %>%
+      str_replace_all(pattern = "([^a-zA-Z])", replacement = " ") %>%
+      str_trim() %>%
+      str_to_title())) +
+    theme_minimal() +
+    ylab(element_blank()) +
+    xlab("Total Posts") +
+    labs(fill = "Words per Post") +
+    ggtitle(paste("Total FB posts since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_summary_dataset_fb
+
+htmlwidgets::saveWidget(plot_summary_dataset_fb, file = paste0(directory, "/plot_summary_dataset_fb.html"))
+
+```
+
+Total YT videos
+=====================================
+
+Column
+-----------------------------------------------------------------------
+
+### Total YouTube videos
+
+```{r}
+plot_summary_dataset_yt <- ggplotly(
+  summary_dataset_yt %>%
+    ggplot(aes(x = total_posts, y = reorder(entity_name, total_posts))) +
+    geom_col(fill = "#03457f") +
+    scale_x_continuous(
+      breaks = seq(0, 10000, 50),
+      labels = seq(0, 10000, 50)
+    ) +
+    scale_y_discrete(labels = (levels(reorder(summary_dataset_yt$entity_name, summary_dataset_yt$total_posts)) %>%
+      str_replace_all(pattern = "([^a-zA-Z])", replacement = " ") %>%
+      str_trim() %>%
+      str_to_title())) +
+    theme_minimal() +
+    ylab(element_blank()) +
+    xlab("Total Videos") +
+    ggtitle(paste("Total YT videos since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_summary_dataset_yt
+
+htmlwidgets::saveWidget(plot_summary_dataset_yt, file = paste0(directory, "/plot_summary_dataset_yt.html"))
+
+```
+
+Across Time FB
+=====================================
+
+Column
+-----------------------------------------------------------------------
+
+### Total Facebook posts across time
+
+```{r}
+plot_over_time_fb <- ggplotly(
+  time_dataset_fb %>%
+    mutate(
+      week = as.Date(cut(as.Date(date), breaks = "week", start.on.monday = TRUE)) + 4
+    ) %>%
+    group_by(entity_name, week) %>%
+    summarise(end_of_week_posts = max(cumulative_posts)) %>%
+    ungroup() %>%
+    ggplot(aes(x = week, y = end_of_week_posts, color = entity_name)) +
+    geom_line() +
+    geom_point(size = 0.8) +
+    geom_vline(aes(xintercept = as.numeric(election_date)), color = "#db1d0b") +
+    geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
+    theme_minimal() +
+    scale_y_continuous(
+      breaks = seq(0, 10000, 250),
+      labels = seq(0, 10000, 250)
+    ) +
+    scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
+    coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
+    theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
+    xlab(element_blank()) +
+    ylab("Total Posts") +
+    ggtitle(paste("Total FB posts over time since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_over_time_fb
+
+htmlwidgets::saveWidget(plot_over_time_fb, file = paste0(directory, "/plot_over_time_fb.html"))
+
+```
+
+Across Time YT
+=====================================
+
+Column
+-----------------------------------------------------------------------
+
+### Total YouTube videos across time
+
+```{r}
+plot_over_time_yt <- ggplotly(
+  time_dataset_yt %>%
+    mutate(
+      week = as.Date(cut(as.Date(date), breaks = "week", start.on.monday = TRUE)) + 4
+    ) %>%
+    group_by(entity_name, week) %>%
+    summarise(end_of_week_posts = max(cumulative_posts)) %>%
+    ungroup() %>%
+    ggplot(aes(x = week, y = end_of_week_posts, color = entity_name)) +
+    geom_line() +
+    geom_point(size = 0.8) +
+    geom_vline(aes(xintercept = as.numeric(election_date)), color = "#db1d0b") +
+    geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
+    theme_minimal() +
+    scale_y_continuous(
+      breaks = seq(0, 10000, 50),
+      labels = seq(0, 10000, 50)
+    ) +
+    scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
+    coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
+    theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
+    xlab(element_blank()) +
+    ylab("Total Videos") +
+    ggtitle(paste("Total YT videos over time since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_over_time_yt
+
+htmlwidgets::saveWidget(plot_over_time_yt, file = paste0(directory, "/plot_over_time_yt.html"))
+
+```
+
+```{r cleanup, include=FALSE}
+# Because the saveWidget function does not correctly delete the dependency files
+# which are used to create individual self-sustaining widgets, we have to delete
+# them using R functions. All non-html files in output folder are deleted.
+
+unlink(
+  grep(
+  x = 
+    list.files(
+    path = directory,
+    recursive = TRUE,
+    full.names = TRUE,
+  ),
+  pattern = "(.html)$",
+  invert = TRUE,
+  value = TRUE
+))
+
+```
+
+
