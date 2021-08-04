@@ -66,10 +66,10 @@ end_date <- as.Date("2021-11-05")
 Summary FB
 =====================================
 
-Column
+Column {.tabset}
 -----------------------------------------------------------------------
 
-### Total posts on public Facebook Pages
+### **TOTAL POSTS ON PUBLIC FACEBOOK PAGES**
 
 ```{r}
 plot_summary_dataset_fb <- ggplotly(
@@ -100,6 +100,40 @@ htmlwidgets::saveWidget(plot_summary_dataset_fb, file = paste0(directory, "/plot
 
 ```
 
+### **PROPORTION OF SPONSORED FACEBOOK POSTS**
+
+```{r}
+plot_summary_dataset_fb_sponsored <- ggplotly(
+  summary_dataset_fb %>%
+    ggplot(aes(x = proportion_sponsored, y = reorder(entity_name, proportion_sponsored), fill = proportion_sponsored)) +
+    geom_col() +
+    geom_vline(aes(xintercept = 0.5, color = "#db0b50")) +
+    scale_fill_continuous(
+      low = "#a4b6da",
+      high = "#4267B2",
+    ) +
+    scale_y_discrete(labels = (levels(reorder(summary_dataset_fb$entity_name, summary_dataset_fb$proportion_sponsored)) %>%
+      str_replace_all(pattern = "([^a-zA-Z])", replacement = " ") %>%
+      str_trim() %>%
+      str_to_title())) +
+    scale_x_continuous(
+      limits = c(0, 1),
+      breaks = seq(0, 1, 0.1),
+      labels = c("0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%")
+    ) +
+    theme_minimal() +
+    theme(legend.position = "none") +
+    xlab("Proportion sponsored posts (texts also appear in the FB Ads library)") +
+    ylab(element_blank()) +
+    ggtitle(paste("Proportion of sponsored posts of FB accounts in Hlidac Statu dataset since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_summary_dataset_fb_sponsored
+
+htmlwidgets::saveWidget(plot_summary_dataset_fb_sponsored, file = paste0(directory, "/plot_summary_dataset_fb_sponsored.html"))
+
+```
+
 Summary YT
 =====================================
 
@@ -123,7 +157,7 @@ plot_summary_dataset_yt <- ggplotly(
       str_to_title())) +
     theme_minimal() +
     ylab(element_blank()) +
-    xlab("Total Videos") +
+    xlab("Total videos") +
     ggtitle(paste("Total YT videos since", format(start_date, "%d.%m.%Y")))
 )
 
@@ -132,7 +166,6 @@ plot_summary_dataset_yt
 htmlwidgets::saveWidget(plot_summary_dataset_yt, file = paste0(directory, "/plot_summary_dataset_yt.html"))
 
 ```
-
 
 Summary TW
 =====================================
@@ -176,7 +209,7 @@ plot_summary_dataset_tw_followers <- ggplotly(
     ) +
     theme_minimal() +
     ylab(element_blank()) +
-    xlab("Total Followers (thousands)") +
+    xlab("Total followers (thousands)") +
     ggtitle(paste("Total followers (thousands) since", format(start_date, "%d.%m.%Y")))
 )
 
@@ -247,10 +280,10 @@ htmlwidgets::saveWidget(plot_summary_dataset_tw_sources, file = paste0(directory
 Over Time FB
 =====================================
 
-Column
+Column {.tabset}
 -----------------------------------------------------------------------
 
-### Total Facebook posts across time
+### **TOTAL FACEBOOK POSTS ACROSS TIME**
 
 ```{r}
 plot_over_time_fb <- ggplotly(
@@ -285,6 +318,41 @@ htmlwidgets::saveWidget(plot_over_time_fb, file = paste0(directory, "/plot_over_
 
 ```
 
+### **TOTAL SPONSORED FACEBOOK POSTS ACROSS TIME**
+
+```{r}
+plot_over_time_fb_sponsored <- ggplotly(
+  time_dataset_fb %>%
+    mutate(
+      week = as.Date(cut(as.Date(date), breaks = "week", start.on.monday = TRUE)) + 4
+    ) %>%
+    group_by(entity_name, week) %>%
+    summarise(end_of_week_sponsored_posts = max(cumulative_sponsored_posts)) %>%
+    ungroup() %>%
+    ggplot(aes(x = week, y = end_of_week_sponsored_posts, color = entity_name)) +
+    geom_line() +
+    geom_point(size = 0.8) +
+    geom_vline(aes(xintercept = as.numeric(election_date)), color = "#db1d0b") +
+    geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
+    theme_minimal() +
+    scale_y_continuous(
+      breaks = seq(0, 10000, 250),
+      labels = seq(0, 10000, 250)
+    ) +
+    scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
+    coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
+    theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
+    xlab(element_blank()) +
+    ylab("Total sponsored posts") +
+    ggtitle(paste("Sponsored posts of FB accounts in Hlidac Statu dataset since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_over_time_fb_sponsored
+
+htmlwidgets::saveWidget(plot_over_time_fb_sponsored, file = paste0(directory, "/plot_over_time_fb_sponsored.html"))
+
+```
+
 Over Time YT
 =====================================
 
@@ -316,8 +384,8 @@ plot_over_time_yt <- ggplotly(
     coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
     theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
     xlab(element_blank()) +
-    ylab("Total Videos") +
-    ggtitle(paste("Total YT videos over time since", format(start_date, "%d.%m.%Y")))
+    ylab("Total videos") +
+    ggtitle(paste("YouTube videos over time since", format(start_date, "%d.%m.%Y")))
 )
 
 plot_over_time_yt
@@ -358,7 +426,7 @@ plot_over_time_tw_tweets <- ggplotly(
     theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
     xlab(element_blank()) +
     ylab("Total tweets") +
-    ggtitle(paste("Total tweets over time since", format(start_date, "%d.%m.%Y")))
+    ggtitle(paste("Tweets over time since", format(start_date, "%d.%m.%Y")))
 )
 
 plot_over_time_tw_tweets

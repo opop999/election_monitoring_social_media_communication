@@ -24,6 +24,16 @@ if (!dir.exists(paste0(dir_name, "/summary_tables"))) {
   print("Output directory already exists")
 }
 
+
+# Where is the dataset from FB Ads repository stored?
+fb_ads_url <- "https://github.com/opop999/election_monitoring_fb_ads/raw/master/data/merged_data_lean.rds"
+
+# To find out, what proportion of the posts are sponsored, we import dataset from FB Ads repository
+temp <- tempfile()
+download.file(fb_ads_url, temp)
+all_data_facebook_ads <- readRDS(temp)
+unlink(temp)
+
 # Load tables created in the previous step
 all_data_facebook <- readRDS(paste0(dir_name, "/all_data_facebook.rds"))
 all_data_youtube <- readRDS(paste0(dir_name, "/all_data_youtube.rds"))
@@ -31,17 +41,22 @@ all_data_twitter <- readRDS(paste0(dir_name, "/all_data_twitter.rds"))
 
 ## 2. Creating a summary table with total activity per page
 total_summary_fb <- all_data_facebook %>%
+  left_join(all_data_facebook_ads, by = c("text" = "ad_creative_body"), keep = TRUE) %>%
   transmute(
     entity_name = as.factor(osobaid),
     date = format(as.Date(datum), format = "%Y-%m-%d"),
-    words = as.numeric(pocetSlov)
+    words = as.numeric(pocetSlov),
+    sponsored_post = ifelse(is.na(ad_creative_body) == FALSE, 1, 0)
   ) %>%
   group_by(entity_name) %>%
   summarise(
     total_posts = n(),
+    total_sponsored_posts = sum(sponsored_post),
     total_thousand_words = round(sum(words) / 1000, digits = 1),
-    words_per_post = round(mean(words), digits = 0)
-  )
+    words_per_post = round(mean(words), digits = 0),
+    proportion_sponsored = total_sponsored_posts/total_posts) %>%
+   ungroup() %>%
+  arrange(desc(total_posts))
 
 total_summary_yt <- all_data_youtube %>%
   transmute(
@@ -84,14 +99,18 @@ total_summary_tw <- all_data_twitter %>%
 
 # 3. Creating a summary table with activity per page throughout time
 time_summary_fb <- all_data_facebook %>%
+  left_join(all_data_facebook_ads, by = c("text" = "ad_creative_body"), keep = TRUE) %>%
   transmute(
     entity_name = as.factor(osobaid),
-    date = format(as.Date(datum), format = "%Y-%m-%d")
+    date = format(as.Date(datum), format = "%Y-%m-%d"),
+    sponsored_post = ifelse(is.na(ad_creative_body) == FALSE, 1, 0)
   ) %>%
   group_by(entity_name, date) %>%
-  summarise(posts_in_day = n()) %>%
+  summarise(posts_in_day = n(),
+            sponsored_posts_in_day = sum(sponsored_post)) %>%
   arrange(date) %>%
-  mutate(cumulative_posts = cumsum(posts_in_day)) %>%
+  mutate(cumulative_posts = cumsum(posts_in_day),
+         cumulative_sponsored_posts = cumsum(sponsored_posts_in_day)) %>%
   ungroup() %>%
   arrange(desc(date))
 
