@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Compile monitored pages list
-       run: Rscript 00_save_profiles_list.R
+      run: Rscript 00_save_profiles_list.R
     - name: Extract all yesterday's FB Posts from Hlidac Statu
     # This action needs a Hlidac Statu API token as an environment variable (we are using GitHub Secrets)
       env:
