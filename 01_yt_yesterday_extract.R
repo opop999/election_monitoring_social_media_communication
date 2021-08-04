@@ -70,7 +70,7 @@ yt_posts_yesterday <- function(server, start_date, end_date, dir_name, sort, des
     result_raw <- GET(paginated_url_call, add_headers("Authorization" = Sys.getenv("HS_TOKEN")))
 
     # Transform JSON output to a dataframe
-    result_df <- fromJSON(content(result_raw, as = "text"))[[3]]
+    result_df <- fromJSON(content(result_raw, as = "text"), flatten = TRUE)[[3]]
 
     yesterday_data <- bind_rows(yesterday_data, result_df)
   }

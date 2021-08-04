@@ -7,7 +7,7 @@
 ## 1. Loading the required R libraries
 
 # Package names
-packages <- c("httr", "data.table", "arrow", "dplyr", "jsonlite", "academictwitteR")
+packages <- c("data.table", "arrow", "dplyr", "academictwitteR")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -21,9 +21,11 @@ invisible(lapply(packages, library, character.only = TRUE))
 # Disable scientific notation of numbers
 options(scipen = 999)
 
-# We have to create a desired directory, if one does not yet exist
-get_all_twitter <- function(server, start_date, end_date, dir_name, upper_limit, token) {
+## 2. Function for the extraction of Twitter content
 
+get_all_twitter <- function(server, users, start_date, end_date, dir_name, upper_limit, token) {
+
+  # We have to create a desired directory, if one does not yet exist
 
   if (!dir.exists(dir_name)) {
     dir.create(dir_name)
@@ -31,28 +33,26 @@ get_all_twitter <- function(server, start_date, end_date, dir_name, upper_limit,
     print("Output directory already exists")
   }
 
-all_data <- get_all_tweets(users = users,
+  # This function calls the Twitter API and saves the output to JSON
+  get_all_tweets(users = users,
                  start_tweets = paste0(start_date, "T00:00:00Z"),
                  end_tweets = paste0(end_date, "T00:00:00Z"),
                  is_retweet	= FALSE,
+                 data_path = paste0(dir_name, "/json/"),
+                 export_query = FALSE,
                  n = upper_limit,
                  bearer_token = token)
 
-all_data_listless <- all_data %>% select(!any_of(c("entities",
-                                            "possibly_sensitive",
-                                            "referenced_tweets",
-                                            "public_metrics",
-                                            "attachments",
-                                            "geo",
-                                            "lang")))
+  # This function binds extracted JSONS to a "tidy" dataframe
+  all_data <- bind_tweets(paste0(dir_name, "/json/"), output_format = "tidy")
 
-saveRDS(all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"))
+  # Delete unneeded JSON repository
+  unlink(paste0(dir_name, "/json/"), recursive = TRUE)
 
-write_feather(x = all_data_listless, sink = paste0(dir_name, "/all_data_", tolower(server), ".feather"))
-fwrite(x = all_data_listless, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
-
-binded <- bind_rows(all_data_twitter, all_data_twitter)
-
+  # Save to CSV and RDS+Feather for speed
+  saveRDS(all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)
+  write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), ".feather"))
+  fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
 
 }
 
@@ -74,7 +74,12 @@ server <- "Twitter" # Could be "Youtube", "Twitter", Facebook"
 token <- Sys.getenv("TWITTER_TOKEN")
 
 
-
 ## 4. Running the function
 
-get_all_twitter(server, start_date, end_date, dir_name, upper_limit, token)
+get_all_twitter(server = server,
+                users = users,
+                start_date = start_date,
+                end_date = end_date,
+                dir_name = dir_name,
+                upper_limit = upper_limit,
+                token = token)

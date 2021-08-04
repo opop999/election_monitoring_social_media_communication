@@ -18,9 +18,8 @@ jobs:
     # Load repo and run the extraction script
     steps:
     - uses: actions/checkout@v2
-    # We are currently not using this script, as we do not limit search to specific pages
-    # - name: Compile monitored pages list
-    #   run: Rscript 00_save_profiles_list.R
+    - name: Compile monitored pages list
+       run: Rscript 00_save_profiles_list.R
     - name: Extract all yesterday's FB Posts from Hlidac Statu
     # This action needs a Hlidac Statu API token as an environment variable (we are using GitHub Secrets)
       env:
@@ -31,11 +30,11 @@ jobs:
       env:
           HS_TOKEN: ${{ secrets.HS_TOKEN }}
       run: Rscript 01_yt_yesterday_extract.R
+    - name: Extract all yesterday's Twitter content from Twitter API
      # This action needs a Twitter API token as an environment variable (we are using GitHub Secrets)
-       # TO BE WORKED ON
-      # env:
-      #     TWITTER_TOKEN: ${{ secrets.TWITTER_TOKEN }}
-      # run: Rscript 01_twitter_yesterday_extract.R
+      env:
+         TWITTER_TOKEN: ${{ secrets.TWITTER_TOKEN }}
+      run: Rscript 01_twitter_yesterday_extract.R
     - name: Create summary tables
       run: Rscript 02_create_summary_tables.R
     - name: Install Flexdashboard package
