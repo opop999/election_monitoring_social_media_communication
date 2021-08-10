@@ -61,7 +61,7 @@ yesterday_data <- bind_tweets(paste0(dir_name, "/json/"), output_format = "tidy"
 
 ## 3. Inputs for the function
 
-start_date <- format(Sys.Date() - 2, format = "%Y-%m-%d") # YYYY-MM-DD or "*" to include everything until the end/beginning
+start_date <- format(Sys.Date() - 8, format = "%Y-%m-%d") # YYYY-MM-DD or "*" to include everything until the end/beginning
 
 end_date <- format(Sys.Date() - 1, format = "%Y-%m-%d")  # Same as start_date
 

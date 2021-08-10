@@ -111,7 +111,7 @@ dir_name <- "data" # Specify the folder, where the tables will be saved
 
 server <- "Youtube" # Could be "Youtube", "Twitter", Facebook"
 
-start_date <- Sys.Date() - 1 # We select yesterday's date in YYYY-MM-DD format
+start_date <- Sys.Date() - 8 # We select last week's date to cover for occasional losses due to api inaccessibility
 
 end_date <- Sys.Date() - 1 # Same as start_date - we only want yesterday
 
