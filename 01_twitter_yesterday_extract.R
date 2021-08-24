@@ -69,7 +69,7 @@ dir_name <- "data" # Specify the folder, where the tables will be saved
 
 users <- readRDS("data/twitter_id.rds")
 
-upper_limit <- 1000
+upper_limit <- 10000
 
 server <- "Twitter" # Could be "Youtube", "Twitter", Facebook"
 
