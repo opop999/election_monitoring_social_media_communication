@@ -1,6 +1,6 @@
 ---
-title: "SOCIAL MEDIA POLITICAL COMMUNICATION"
-date: "Last updated `r format(Sys.time(),'%d. %m. %Y')`"
+title: "SOCIAL MEDIA"
+date: "Updated `r format(Sys.time(),'%d. %m. %Y')`"
 author: "Ondrej Pekacek/TI CZ"
 output: 
   flexdashboard::flex_dashboard:
@@ -10,8 +10,8 @@ output:
     vertical_layout: fill
     source_code: https://github.com/opop999/election_monitoring_social_media_communication
     navbar:
-      - {title: "About Project", icon: "ion-information-circled", href: "https://www.transparentnivolby.cz/snemovna2021"}
-      - {title: "About Author", icon: "ion-social-linkedin", href: "https://www.linkedin.com/in/ondrej-pekacek"}
+      - {title: "Project", icon: "ion-information-circled", href: "https://www.transparentnivolby.cz/snemovna2021"}
+      - {title: "Author", icon: "ion-social-linkedin", href: "https://www.linkedin.com/in/ondrej-pekacek"}
       - {title: "Data: Hlidac Statu", icon: "ion-cloud", href: "https://www.hlidacstatu.cz/data/Index/vyjadreni-politiku"}
       - {title: "Data: Twitter", icon: "ion-cloud", href: "https://developer.twitter.com/en/docs/twitter-api"}
 ---
@@ -277,7 +277,7 @@ htmlwidgets::saveWidget(plot_summary_dataset_tw_sources, file = paste0(directory
 
 ```
 
-Over Time FB
+Trend FB
 =====================================
 
 Column {.tabset}
@@ -353,7 +353,7 @@ htmlwidgets::saveWidget(plot_over_time_fb_sponsored, file = paste0(directory, "/
 
 ```
 
-Over Time YT
+Trend YT
 =====================================
 
 Column
@@ -394,7 +394,7 @@ htmlwidgets::saveWidget(plot_over_time_yt, file = paste0(directory, "/plot_over_
 
 ```
 
-Over Time TW
+Trend TW
 =====================================
 
 Column {.tabset}
