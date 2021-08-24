@@ -50,12 +50,11 @@ get_all_twitter <- function(server, users, start_date, end_date, dir_name, upper
   unlink(paste0(dir_name, "/json/"), recursive = TRUE)
 
   # Save to CSV and RDS+Feather for speed
-  saveRDS(all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)
-  write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), ".feather"))
-  fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
+  saveRDS(all_data, file = paste0(dir_name, "/all_data_", tolower(server), "_test.rds"), compress = FALSE)
+  write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), "_test.feather"))
+  fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), "_test.csv"))
 
 }
-
 
 ## 3. Inputs for the function
 
@@ -67,7 +66,7 @@ dir_name <- "data" # Specify the folder, where the tables will be saved
 
 users <- readRDS("data/twitter_id.rds")
 
-upper_limit <- 100000
+upper_limit <- 1000000
 
 server <- "Twitter" # Could be "Youtube", "Twitter", Facebook"
 
