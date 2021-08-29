@@ -1,7 +1,11 @@
 entity_name,date,posts_in_day,cumulative_posts
-andrej-babis,2021-08-26,1,156
-karel-havlicek-3,2021-08-26,1,45
-tomio-okamura,2021-08-26,1,329
+andrej-babis,2021-08-29,2,160
+andrej-babis,2021-08-27,1,158
+petr-fiala,2021-08-27,2,69
+tomio-okamura,2021-08-27,2,332
+andrej-babis,2021-08-26,2,157
+karel-havlicek-3,2021-08-26,2,46
+tomio-okamura,2021-08-26,2,330
 tomio-okamura,2021-08-24,2,328
 tomio-okamura,2021-08-23,6,326
 andrej-babis,2021-08-22,4,155
