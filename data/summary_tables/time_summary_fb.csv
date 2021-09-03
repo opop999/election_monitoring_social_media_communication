@@ -1,12 +1,16 @@
 entity_name,date,posts_in_day,sponsored_posts_in_day,cumulative_posts,cumulative_sponsored_posts
+alena-schillerova,2021-09-01,1,0,622,20
 andrej-babis,2021-09-01,6,0,1189,55
+klara-dostalova,2021-09-01,2,0,174,0
 zdenek-hrib,2021-09-01,1,0,157,0
+alena-schillerova,2021-08-31,3,0,621,20
 andrej-babis,2021-08-31,3,0,1183,55
 klara-dostalova,2021-08-31,1,0,172,0
 andrej-babis,2021-08-30,5,0,1180,55
 martin-kupka,2021-08-30,1,1,223,25
 klara-dostalova,2021-08-29,1,0,171,0
 tomio-okamura,2021-08-29,8,6,1692,968
+alena-schillerova,2021-08-28,1,0,618,20
 andrej-babis,2021-08-28,3,0,1175,55
 klara-dostalova,2021-08-28,1,0,170,0
 tomio-okamura,2021-08-28,1,0,1684,962
@@ -15,6 +19,7 @@ klara-dostalova,2021-08-27,2,0,169,0
 martin-kupka,2021-08-27,1,1,222,24
 miroslav-kalousek,2021-08-27,1,0,380,0
 petr-fiala,2021-08-27,1,0,852,133
+alena-schillerova,2021-08-26,1,0,617,20
 jan-farsky,2021-08-26,1,0,138,2
 klara-dostalova,2021-08-26,2,0,167,0
 martin-kupka,2021-08-26,1,0,221,23
