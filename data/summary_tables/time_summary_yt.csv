@@ -1,8 +1,9 @@
 entity_name,date,posts_in_day,cumulative_posts
-andrej-babis,2021-09-06,1,180
-petr-fiala,2021-09-06,2,75
-tomio-okamura,2021-09-06,2,347
-andrej-babis,2021-09-05,3,179
+andrej-babis,2021-09-07,2,184
+andrej-babis,2021-09-06,2,182
+petr-fiala,2021-09-06,4,77
+tomio-okamura,2021-09-06,4,349
+andrej-babis,2021-09-05,4,180
 tomio-okamura,2021-09-05,1,345
 andrej-babis,2021-09-04,4,176
 andrej-babis,2021-09-03,4,172
