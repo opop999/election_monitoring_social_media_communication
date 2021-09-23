@@ -1,8 +1,8 @@
 entity_name,total_posts,total_sponsored_posts,total_thousand_words,words_per_post,proportion_sponsored
-tomio-okamura,1748,1010,468.8,268,0.577803203661327
+tomio-okamura,1750,1013,468.9,268,0.578857142857143
 andrej-babis,1202,59,36.1,30,0.0490848585690516
 petr-fiala,896,145,57.5,64,0.161830357142857
-alena-schillerova,658,20,24.1,37,0.0303951367781155
+alena-schillerova,666,20,24.4,37,0.03003003003003
 miroslav-kalousek,387,0,15.1,39,0
 karel-havlicek-3,328,0,15.5,47,0
 martin-kupka,241,36,16.4,68,0.149377593360996
@@ -11,7 +11,7 @@ klara-dostalova,186,0,14.2,76,0
 zdenek-hrib,164,0,31.6,193,0
 alexandra-udzenija,160,0,22.4,140,0
 milos-zeman,158,0,47.7,302,0
-jan-farsky,141,2,11.7,83,0.0141843971631206
+jan-farsky,142,2,11.7,83,0.0140845070422535
 vladimir-kremlik,113,0,5.7,51,0
 jan-hamacek,32,1,3,95,0.03125
 adam-vojtech-1,27,0,1.4,50,0
