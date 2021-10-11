@@ -63,7 +63,7 @@ yesterday_data <- bind_tweets(paste0(dir_name, "/json/"), output_format = "tidy"
 
 start_date <- format(Sys.Date() - 8, format = "%Y-%m-%d") # YYYY-MM-DD or "*" to include everything until the end/beginning
 
-end_date <- format(Sys.Date() - 1, format = "%Y-%m-%d")  # Same as start_date
+end_date <- format(Sys.Date(), format = "%Y-%m-%d")  # Same as start_date
 
 dir_name <- "data" # Specify the folder, where the tables will be saved
 

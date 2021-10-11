@@ -113,7 +113,7 @@ server <- "Youtube" # Could be "Youtube", "Twitter", Facebook"
 
 start_date <- Sys.Date() - 8 # We select last week's date to cover for occasional losses due to api inaccessibility
 
-end_date <- Sys.Date() - 1 # Same as start_date - we only want yesterday
+end_date <- Sys.Date() # Same as start_date
 
 sort <- "datum" # Which column is used for sorting? We keep this consistent
 

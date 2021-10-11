@@ -181,8 +181,8 @@ plot_summary_dataset_tw_tweets <- ggplotly(
     ggplot(aes(x = total_posts, y = reorder(entity_name, total_posts))) +
     geom_col(fill = "#1DA1F2") +
     scale_x_continuous(
-      breaks = seq(0, 10000, 250),
-      labels = seq(0, 10000, 250)
+      breaks = seq(0, 20000, 1000),
+      labels = seq(0, 20000, 1000)
     ) +
     theme_minimal() +
     ylab(element_blank()) +
@@ -227,8 +227,8 @@ plot_summary_dataset_tw_interactions <- ggplotly(
     ggplot(aes(x = total_interactions_thousands, y = reorder(entity_name, total_interactions_thousands))) +
     geom_col(fill = "#657786") +
     scale_x_continuous(
-      breaks = seq(0, 10000, 25),
-      labels = seq(0, 10000, 25)
+      breaks = seq(0, 10000, 250),
+      labels = seq(0, 10000, 250)
     ) +
     theme_minimal() +
     ylab(element_blank()) +
@@ -257,8 +257,8 @@ htmlwidgets::saveWidget(plot_summary_dataset_tw_interactions, file = paste0(dire
     geom_col(fill = "#1DA1F2") +
     facet_wrap(vars(source)) +
     scale_x_continuous(
-      breaks = seq(0, 10000, 250),
-      labels = seq(0, 10000, 250)
+      breaks = seq(0, 20000, 2500),
+      labels = seq(0, 20000, 2500)
     ) +
     theme_minimal() +
     theme(
@@ -418,8 +418,8 @@ plot_over_time_tw_tweets <- ggplotly(
     geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
     theme_minimal() +
     scale_y_continuous(
-      breaks = seq(0, 10000, 200),
-      labels = seq(0, 10000, 200)
+      breaks = seq(0, 30000, 1000),
+      labels = seq(0, 30000, 1000)
     ) +
     scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
     coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
@@ -453,8 +453,8 @@ plot_over_time_tw_interactions <- ggplotly(
     geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
     theme_minimal() +
     scale_y_continuous(
-      breaks = seq(0, 10000, 20),
-      labels = seq(0, 10000, 20)
+      breaks = seq(0, 10000, 250),
+      labels = seq(0, 10000, 250)
     ) +
     scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
     coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
