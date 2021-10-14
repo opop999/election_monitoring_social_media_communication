@@ -29,9 +29,9 @@ if (!dir.exists(paste0(dir_name, "/summary_tables"))) {
 # Because of a bug in the dependency for the election_monitoring_fb_ads, we are currently using and alternative
 # workflow to overcome this issue. This means that the url is slightly changed for the time being.
 
-# fb_ads_url <- "https://github.com/opop999/election_monitoring_fb_ads/raw/master/data/merged_data_lean.rds"
+fb_ads_url <- "https://github.com/opop999/election_monitoring_fb_ads/raw/master/data/merged_data_lean.rds"
 
-fb_ads_url <- "https://github.com/opop999/election_monitoring_fb_ads/raw/master/data/temp/merged_data_lean.rds"
+# fb_ads_url <- "https://github.com/opop999/election_monitoring_fb_ads/raw/master/data/temp/merged_data_lean.rds"
 
 
 # To find out, what proportion of the posts are sponsored, we import dataset from FB Ads repository
