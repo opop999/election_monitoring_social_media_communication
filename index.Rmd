@@ -1,6 +1,6 @@
 ---
-title: "SOCIAL MEDIA"
-date: "Updated `r format(Sys.time(),'%d. %m. %Y')`"
+title: "Social Media Dashboard"
+date: "Update `r format(Sys.time(),'%d. %m. %Y')`"
 author: "Ondrej Pekacek/TI CZ"
 output: 
   flexdashboard::flex_dashboard:
@@ -63,7 +63,130 @@ end_date <- as.Date("2021-11-05")
 
 ```
 
-Summary FB
+Twitter {data-navmenu="Platform Summaries"}
+=====================================
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### **TOTAL TWEETS**
+
+```{r}
+plot_summary_dataset_tw_tweets <- ggplotly(
+    summary_dataset_tw %>%
+  	pivot_longer(cols = c("total_posts",
+                            "total_retweets"), names_to = "type", values_to = "tweets_type_count") %>%
+  	mutate(type = factor(type, levels = c("total_posts", "total_retweets"), labels = c("Original Posts", "Retweets"))) %>% 
+    ggplot(aes(x = tweets_type_count, y = reorder(entity_name, total_posts_and_retweets), fill = type)) +
+    geom_col() +
+    scale_x_continuous(
+      breaks = seq(0, 20000, 1000),
+      labels = seq(0, 20000, 1000)
+    ) +
+    theme_minimal() +
+    labs(fill = "Content Type") +
+    ylab(element_blank()) +
+    xlab("Original Tweets (Posts, Quotes, Replies) and Retweets") +
+    ggtitle(paste("Total Tweets and Retweets (based on Twitter API) since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_summary_dataset_tw_tweets
+
+htmlwidgets::saveWidget(plot_summary_dataset_tw_tweets, file = paste0(directory, "/plot_summary_dataset_tw_tweets.html"))
+
+```
+
+### **TOTAL FOLLOWERS**
+
+```{r}
+plot_summary_dataset_tw_followers <- ggplotly(
+  summary_dataset_tw %>%
+    ggplot(aes(x = total_followers_thousands, y = reorder(entity_name, total_followers_thousands))) +
+    geom_col(fill = "#14171A") +
+    scale_x_continuous(
+      breaks = seq(0, 10000, 50),
+      labels = seq(0, 10000, 50)
+    ) +
+    theme_minimal() +
+    ylab(element_blank()) +
+    xlab("Total Followers (thousands)") +
+    ggtitle(paste("Total Followers (thousands, based on Twitter API) since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_summary_dataset_tw_followers
+
+htmlwidgets::saveWidget(plot_summary_dataset_tw_followers, file = paste0(directory, "/plot_summary_dataset_tw_followers.html"))
+
+```
+
+### **TOTAL INTERACTIONS**
+
+```{r}
+plot_summary_dataset_tw_interactions <- ggplotly(
+  summary_dataset_tw %>%
+    ggplot(aes(x = total_interactions_thousands, y = reorder(entity_name, total_interactions_thousands))) +
+    geom_col(fill = "#657786") +
+    scale_x_continuous(
+      breaks = seq(0, 10000, 250),
+      labels = seq(0, 10000, 250)
+    ) +
+    theme_minimal() +
+    ylab(element_blank()) +
+    xlab("Total Interactions (retweet/comment/quote, in thousands)") +
+    ggtitle(paste("Total Interactions (thousands, based on Twitter API) since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_summary_dataset_tw_interactions
+
+htmlwidgets::saveWidget(plot_summary_dataset_tw_interactions, file = paste0(directory, "/plot_summary_dataset_tw_interactions.html"))
+
+```
+
+### **TWEET SOURCES**
+
+```{r}
+ plot_summary_dataset_tw_sources <- ggplotly(
+   summary_dataset_tw %>%
+    pivot_longer(cols = c("total_source_iphone",
+                          "total_source_android",
+                          "total_source_web",
+                          "total_source_tweet_deck",
+                          "total_source_ipad",
+                          "total_source_media_studio"), names_to = "source", values_to = "tweets_from_source") %>%
+   	mutate(source = factor(source,
+   												 levels = c("total_source_android",
+   												 					 	"total_source_ipad",
+   												 					  "total_source_iphone",
+						                          "total_source_media_studio",
+   												 					 	"total_source_tweet_deck",
+						                          "total_source_web"),
+   											  labels = c("Android",
+   											  					 "Ipad",
+   											  					 "Iphone",
+   											  					 "Media Studio",
+   											  					 "Tweet Deck",
+   											  					 "Web"))) %>%
+    ggplot(aes(x = tweets_from_source, y = reorder(entity_name, total_posts_and_retweets), fill = source)) +
+    geom_col() +
+    # facet_wrap(vars(source)) +
+    scale_x_continuous(
+      breaks = seq(0, 20000, 1000),
+      labels = seq(0, 20000, 1000)
+    ) +
+    theme_minimal() +
+   	labs(fill = "Technology used") +
+    ylab(element_blank()) +
+    xlab("Total Tweets and Retweets from specific device") +
+    ggtitle(paste("Total Tweets and Retweets by device (based on Twitter API) since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_summary_dataset_tw_sources
+
+htmlwidgets::saveWidget(plot_summary_dataset_tw_sources, file = paste0(directory, "/plot_summary_dataset_tw_sources.html"))
+
+```
+
+Facebook {data-navmenu="Platform Summaries"}
 =====================================
 
 Column {.tabset}
@@ -91,7 +214,7 @@ plot_summary_dataset_fb <- ggplotly(
     ylab(element_blank()) +
     xlab("Total Posts") +
     labs(fill = "Words per Post") +
-    ggtitle(paste("Total FB posts since", format(start_date, "%d.%m.%Y")))
+    ggtitle(paste("Total FB posts (based on Hlidac Statu database) since", format(start_date, "%d.%m.%Y")))
 )
 
 plot_summary_dataset_fb
@@ -110,7 +233,7 @@ plot_summary_dataset_fb_sponsored <- ggplotly(
     geom_vline(aes(xintercept = 0.5, color = "#db0b50")) +
     scale_fill_continuous(
       low = "#a4b6da",
-      high = "#4267B2",
+      high = "#4267B2"
     ) +
     scale_y_discrete(labels = (levels(reorder(summary_dataset_fb$entity_name, summary_dataset_fb$proportion_sponsored)) %>%
       str_replace_all(pattern = "([^a-zA-Z])", replacement = " ") %>%
@@ -123,9 +246,9 @@ plot_summary_dataset_fb_sponsored <- ggplotly(
     ) +
     theme_minimal() +
     theme(legend.position = "none") +
-    xlab("Proportion sponsored posts (texts also appear in the FB Ads library)") +
+    xlab("Proportion sponsored posts (FB Ads library x Hlidac Statu database)") +
     ylab(element_blank()) +
-    ggtitle(paste("Proportion of sponsored posts of FB accounts in Hlidac Statu dataset since", format(start_date, "%d.%m.%Y")))
+    ggtitle(paste("Proportion of sponsored posts (based on Hlidac Statu and FB Ads Library database) since", format(start_date, "%d.%m.%Y")))
 )
 
 plot_summary_dataset_fb_sponsored
@@ -134,13 +257,13 @@ htmlwidgets::saveWidget(plot_summary_dataset_fb_sponsored, file = paste0(directo
 
 ```
 
-Summary YT
+YouTube {data-navmenu="Platform Summaries"}
 =====================================
 
-Column
+Column {.tabset}
 -----------------------------------------------------------------------
 
-### Total YouTube videos
+### **TOTAL YOUTUBE VIDEOS**
 
 ```{r}
 plot_summary_dataset_yt <- ggplotly(
@@ -157,8 +280,8 @@ plot_summary_dataset_yt <- ggplotly(
       str_to_title())) +
     theme_minimal() +
     ylab(element_blank()) +
-    xlab("Total videos") +
-    ggtitle(paste("Total YT videos since", format(start_date, "%d.%m.%Y")))
+    xlab("Total Videos") +
+    ggtitle(paste("Total YT Videos (based on Hlidac Statu database) since", format(start_date, "%d.%m.%Y")))
 )
 
 plot_summary_dataset_yt
@@ -167,132 +290,22 @@ htmlwidgets::saveWidget(plot_summary_dataset_yt, file = paste0(directory, "/plot
 
 ```
 
-Summary TW
+Twitter {data-navmenu="Trends Over Time"}
 =====================================
 
 Column {.tabset}
 -----------------------------------------------------------------------
 
-### **TOTAL TWEETS**
+### **TWEETS AND RETWEETS**
 
 ```{r}
-plot_summary_dataset_tw_tweets <- ggplotly(
-  summary_dataset_tw %>%
-    ggplot(aes(x = total_posts, y = reorder(entity_name, total_posts))) +
-    geom_col(fill = "#1DA1F2") +
-    scale_x_continuous(
-      breaks = seq(0, 20000, 1000),
-      labels = seq(0, 20000, 1000)
-    ) +
-    theme_minimal() +
-    ylab(element_blank()) +
-    xlab("Total tweets") +
-    ggtitle(paste("Total tweets since", format(start_date, "%d.%m.%Y")))
-)
-
-plot_summary_dataset_tw_tweets
-
-htmlwidgets::saveWidget(plot_summary_dataset_tw_tweets, file = paste0(directory, "/plot_summary_dataset_tw_tweets.html"))
-
-```
-
-### **TOTAL FOLLOWERS**
-
-```{r}
-plot_summary_dataset_tw_followers <- ggplotly(
-  summary_dataset_tw %>%
-    ggplot(aes(x = total_followers_thousands, y = reorder(entity_name, total_followers_thousands))) +
-    geom_col(fill = "#14171A") +
-    scale_x_continuous(
-      breaks = seq(0, 10000, 50),
-      labels = seq(0, 10000, 50)
-    ) +
-    theme_minimal() +
-    ylab(element_blank()) +
-    xlab("Total followers (thousands)") +
-    ggtitle(paste("Total followers (thousands) since", format(start_date, "%d.%m.%Y")))
-)
-
-plot_summary_dataset_tw_followers
-
-htmlwidgets::saveWidget(plot_summary_dataset_tw_followers, file = paste0(directory, "/plot_summary_dataset_tw_followers.html"))
-
-```
-
-### **TOTAL INTERACTIONS**
-
-```{r}
-plot_summary_dataset_tw_interactions <- ggplotly(
-  summary_dataset_tw %>%
-    ggplot(aes(x = total_interactions_thousands, y = reorder(entity_name, total_interactions_thousands))) +
-    geom_col(fill = "#657786") +
-    scale_x_continuous(
-      breaks = seq(0, 10000, 250),
-      labels = seq(0, 10000, 250)
-    ) +
-    theme_minimal() +
-    ylab(element_blank()) +
-    xlab("Total interactions (retweet/comment/quote, in thousands)") +
-    ggtitle(paste("Total interactions (thousands) since", format(start_date, "%d.%m.%Y")))
-)
-
-plot_summary_dataset_tw_interactions
-
-htmlwidgets::saveWidget(plot_summary_dataset_tw_interactions, file = paste0(directory, "/plot_summary_dataset_tw_interactions.html"))
-
-```
-
-### **TWEET SOURCES**
-
-```{r}
- plot_summary_dataset_tw_sources <- ggplotly(
-   summary_dataset_tw %>%
-    pivot_longer(cols = c("total_source_iphone",
-                          "total_source_android",
-                          "total_source_web",
-                          "total_source_tweet_deck",
-                          "total_source_ipad",
-                          "total_source_media_studio"), names_to = "source", values_to = "tweets_from_source") %>% 
-    ggplot(aes(x = tweets_from_source, y = entity_name)) +
-    geom_col(fill = "#1DA1F2") +
-    facet_wrap(vars(source)) +
-    scale_x_continuous(
-      breaks = seq(0, 20000, 2500),
-      labels = seq(0, 20000, 2500)
-    ) +
-    theme_minimal() +
-    theme(
-      panel.border = element_rect(colour = "black", fill = NA, size = 0.5),
-      panel.spacing.x = unit(0.5, "line"),
-      strip.background = element_rect(fill = "grey")
-    ) +
-    ylab(element_blank()) +
-    xlab("Total tweets from specific device") +
-    ggtitle(paste("Total tweets by device since", format(start_date, "%d.%m.%Y")))
-)
-
-plot_summary_dataset_tw_sources
-
-htmlwidgets::saveWidget(plot_summary_dataset_tw_sources, file = paste0(directory, "/plot_summary_dataset_tw_sources.html"))
-
-```
-
-Trend FB
-=====================================
-
-Column {.tabset}
------------------------------------------------------------------------
-
-### **TOTAL FACEBOOK POSTS ACROSS TIME**
-
-```{r}
-plot_over_time_fb <- ggplotly(
-  time_dataset_fb %>%
+plot_over_time_tw_tweets_and_retweets <- ggplotly(
+  time_dataset_tw %>%
     mutate(
       week = as.Date(cut(as.Date(date), breaks = "week", start.on.monday = TRUE)) + 4
     ) %>%
     group_by(entity_name, week) %>%
-    summarise(end_of_week_posts = max(cumulative_posts)) %>%
+    summarise(end_of_week_posts = max(cumulative_posts_and_retweets)) %>%
     ungroup() %>%
     ggplot(aes(x = week, y = end_of_week_posts, color = entity_name)) +
     geom_line() +
@@ -301,106 +314,25 @@ plot_over_time_fb <- ggplotly(
     geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
     theme_minimal() +
     scale_y_continuous(
-      breaks = seq(0, 10000, 250),
-      labels = seq(0, 10000, 250)
+      breaks = seq(0, 30000, 1000),
+      labels = seq(0, 30000, 1000)
     ) +
     scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
     coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
     theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
     xlab(element_blank()) +
-    ylab("Total Posts") +
-    ggtitle(paste("Total FB posts over time since", format(start_date, "%d.%m.%Y")))
+    ylab("Total Tweets and Retweets") +
+  	labs(color = "User") +
+    ggtitle(paste("Combined Tweets and Retweets (based on Twitter API) since", format(start_date, "%d.%m.%Y")))
 )
 
-plot_over_time_fb
+plot_over_time_tw_tweets_and_retweets
 
-htmlwidgets::saveWidget(plot_over_time_fb, file = paste0(directory, "/plot_over_time_fb.html"))
+htmlwidgets::saveWidget(plot_over_time_tw_tweets_and_retweets, file = paste0(directory, "/plot_over_time_tw_tweets_and_retweets.html"))
 
 ```
 
-### **TOTAL SPONSORED FACEBOOK POSTS ACROSS TIME**
-
-```{r}
-plot_over_time_fb_sponsored <- ggplotly(
-  time_dataset_fb %>%
-    mutate(
-      week = as.Date(cut(as.Date(date), breaks = "week", start.on.monday = TRUE)) + 4
-    ) %>%
-    group_by(entity_name, week) %>%
-    summarise(end_of_week_sponsored_posts = max(cumulative_sponsored_posts)) %>%
-    ungroup() %>%
-    ggplot(aes(x = week, y = end_of_week_sponsored_posts, color = entity_name)) +
-    geom_line() +
-    geom_point(size = 0.8) +
-    geom_vline(aes(xintercept = as.numeric(election_date)), color = "#db1d0b") +
-    geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
-    theme_minimal() +
-    scale_y_continuous(
-      breaks = seq(0, 10000, 250),
-      labels = seq(0, 10000, 250)
-    ) +
-    scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
-    coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
-    theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
-    xlab(element_blank()) +
-    ylab("Total sponsored posts") +
-    ggtitle(paste("Sponsored posts of FB accounts in Hlidac Statu dataset since", format(start_date, "%d.%m.%Y")))
-)
-
-plot_over_time_fb_sponsored
-
-htmlwidgets::saveWidget(plot_over_time_fb_sponsored, file = paste0(directory, "/plot_over_time_fb_sponsored.html"))
-
-```
-
-Trend YT
-=====================================
-
-Column
------------------------------------------------------------------------
-
-### Total YouTube videos across time
-
-```{r}
-plot_over_time_yt <- ggplotly(
-  time_dataset_yt %>%
-    mutate(
-      week = as.Date(cut(as.Date(date), breaks = "week", start.on.monday = TRUE)) + 4
-    ) %>%
-    group_by(entity_name, week) %>%
-    summarise(end_of_week_posts = max(cumulative_posts)) %>%
-    ungroup() %>%
-    ggplot(aes(x = week, y = end_of_week_posts, color = entity_name)) +
-    geom_line() +
-    geom_point(size = 0.8) +
-    geom_vline(aes(xintercept = as.numeric(election_date)), color = "#db1d0b") +
-    geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
-    theme_minimal() +
-    scale_y_continuous(
-      breaks = seq(0, 10000, 50),
-      labels = seq(0, 10000, 50)
-    ) +
-    scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
-    coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
-    theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
-    xlab(element_blank()) +
-    ylab("Total videos") +
-    ggtitle(paste("YouTube videos over time since", format(start_date, "%d.%m.%Y")))
-)
-
-plot_over_time_yt
-
-htmlwidgets::saveWidget(plot_over_time_yt, file = paste0(directory, "/plot_over_time_yt.html"))
-
-```
-
-Trend TW
-=====================================
-
-Column {.tabset}
------------------------------------------------------------------------
-
-### **TWEETS ACROSS TIME**
+### **TWEETS**
 
 ```{r}
 plot_over_time_tw_tweets <- ggplotly(
@@ -424,9 +356,10 @@ plot_over_time_tw_tweets <- ggplotly(
     scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
     coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
     theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
+  	labs(color = "User") +
     xlab(element_blank()) +
-    ylab("Total tweets") +
-    ggtitle(paste("Tweets over time since", format(start_date, "%d.%m.%Y")))
+    ylab("Total Tweets (original posts, replies and quotes)") +
+    ggtitle(paste("Tweets over time (based on Twitter API) since", format(start_date, "%d.%m.%Y")))
 )
 
 plot_over_time_tw_tweets
@@ -435,7 +368,43 @@ htmlwidgets::saveWidget(plot_over_time_tw_tweets, file = paste0(directory, "/plo
 
 ```
 
-### **INTERACTIONS ACROSS TIME**
+### **RETWEETS**
+
+```{r}
+plot_over_time_tw_retweets <- ggplotly(
+  time_dataset_tw %>%
+    mutate(
+      week = as.Date(cut(as.Date(date), breaks = "week", start.on.monday = TRUE)) + 4
+    ) %>%
+    group_by(entity_name, week) %>%
+    summarise(end_of_week_posts = max(cumulative_retweets)) %>%
+    ungroup() %>%
+    ggplot(aes(x = week, y = end_of_week_posts, color = entity_name)) +
+    geom_line() +
+    geom_point(size = 0.8) +
+    geom_vline(aes(xintercept = as.numeric(election_date)), color = "#db1d0b") +
+    geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
+    theme_minimal() +
+    scale_y_continuous(
+      breaks = seq(0, 30000, 1000),
+      labels = seq(0, 30000, 1000)
+    ) +
+    scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
+    coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
+    theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
+    xlab(element_blank()) +
+    ylab("Total Retweets (excluding original posts, replies and quotes)") +
+  	labs(color = "User") +
+    ggtitle(paste("Total Retweets only (based on Twitter API) since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_over_time_tw_retweets
+
+htmlwidgets::saveWidget(plot_over_time_tw_retweets, file = paste0(directory, "/plot_over_time_tw_retweets.html"))
+
+```
+
+### **INTERACTIONS**
 
 ```{r}
 plot_over_time_tw_interactions <- ggplotly(
@@ -460,13 +429,134 @@ plot_over_time_tw_interactions <- ggplotly(
     coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
     theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
     xlab(element_blank()) +
-    ylab("Total interactions (retweet/comment/quote, in thousands)") +
-    ggtitle(paste("Total interactions (thousands) over time since", format(start_date, "%d.%m.%Y")))
+    ylab("Total Interactions (retweet/comment/quote, in thousands)") +
+    labs(color = "User") +
+    ggtitle(paste("Total Interactions over time (thousands, based on Twitter API) since", format(start_date, "%d.%m.%Y")))
 )
 
 plot_over_time_tw_interactions
 
 htmlwidgets::saveWidget(plot_over_time_tw_interactions, file = paste0(directory, "/plot_over_time_tw_interactions.html"))
+
+```
+
+Facebook {data-navmenu="Trends Over Time"}
+=====================================
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+### **FACEBOOK POSTS**
+
+```{r}
+plot_over_time_fb <- ggplotly(
+  time_dataset_fb %>%
+    mutate(
+      week = as.Date(cut(as.Date(date), breaks = "week", start.on.monday = TRUE)) + 4
+    ) %>%
+    group_by(entity_name, week) %>%
+    summarise(end_of_week_posts = max(cumulative_posts)) %>%
+    ungroup() %>%
+    ggplot(aes(x = week, y = end_of_week_posts, color = entity_name)) +
+    geom_line() +
+    geom_point(size = 0.8) +
+    geom_vline(aes(xintercept = as.numeric(election_date)), color = "#db1d0b") +
+    geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
+    theme_minimal() +
+    scale_y_continuous(
+      breaks = seq(0, 10000, 250),
+      labels = seq(0, 10000, 250)
+    ) +
+    scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
+    coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
+    theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
+    xlab(element_blank()) +
+    ylab("Total FB Posts") +
+  	labs(color = "User") +
+    ggtitle(paste("Total FB Posts (based on Hlidac Statu database) since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_over_time_fb
+
+htmlwidgets::saveWidget(plot_over_time_fb, file = paste0(directory, "/plot_over_time_fb.html"))
+
+```
+
+<!-- ### **TOTAL SPONSORED FACEBOOK POSTS ACROSS TIME** -->
+
+<!-- ```{r} -->
+<!-- plot_over_time_fb_sponsored <- ggplotly( -->
+<!--   time_dataset_fb %>% -->
+<!--     mutate( -->
+<!--       week = as.Date(cut(as.Date(date), breaks = "week", start.on.monday = TRUE)) + 4 -->
+<!--     ) %>% -->
+<!--     group_by(entity_name, week) %>% -->
+<!--     summarise(end_of_week_sponsored_posts = max(cumulative_sponsored_posts)) %>% -->
+<!--     ungroup() %>% -->
+<!--     ggplot(aes(x = week, y = end_of_week_sponsored_posts, color = entity_name)) + -->
+<!--     geom_line() + -->
+<!--     geom_point(size = 0.8) + -->
+<!--     geom_vline(aes(xintercept = as.numeric(election_date)), color = "#db1d0b") + -->
+<!--     geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) + -->
+<!--     theme_minimal() + -->
+<!--     scale_y_continuous( -->
+<!--       breaks = seq(0, 10000, 250), -->
+<!--       labels = seq(0, 10000, 250) -->
+<!--     ) + -->
+<!--     scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") + -->
+<!--     coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) + -->
+<!--     theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) + -->
+<!--     xlab(element_blank()) + -->
+<!--     ylab("Total Sponsored Posts") + -->
+<!--   	labs(color = "User") + -->
+<!--     ggtitle(paste("Sponsored posts of FB accounts in Hlidac Statu dataset since", format(start_date, "%d.%m.%Y"))) -->
+<!-- ) -->
+
+<!-- plot_over_time_fb_sponsored -->
+
+<!-- htmlwidgets::saveWidget(plot_over_time_fb_sponsored, file = paste0(directory, "/plot_over_time_fb_sponsored.html")) -->
+
+<!-- ``` -->
+
+YouTube {data-navmenu="Trends Over Time"}
+=====================================
+
+Column {.tabset} 
+-----------------------------------------------------------------------
+
+### **YOUTUBE VIDEOS**
+
+```{r}
+plot_over_time_yt <- ggplotly(
+  time_dataset_yt %>%
+    mutate(
+      week = as.Date(cut(as.Date(date), breaks = "week", start.on.monday = TRUE)) + 4
+    ) %>%
+    group_by(entity_name, week) %>%
+    summarise(end_of_week_posts = max(cumulative_posts)) %>%
+    ungroup() %>%
+    ggplot(aes(x = week, y = end_of_week_posts, color = entity_name)) +
+    geom_line() +
+    geom_point(size = 0.8) +
+    geom_vline(aes(xintercept = as.numeric(election_date)), color = "#db1d0b") +
+    geom_text(aes(x = election_date, y = 0.2, label = "elections"), color = "#03457f", size = 4) +
+    theme_minimal() +
+    scale_y_continuous(
+      breaks = seq(0, 10000, 50),
+      labels = seq(0, 10000, 50)
+    ) +
+    scale_x_date(date_breaks = "1 months", date_labels = "%d.%m.%y") +
+    coord_cartesian(xlim = c(start_date, end_date), expand = TRUE) +
+    theme(legend.title = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
+    xlab(element_blank()) +
+    ylab("Total Videos") +
+  	labs(color = "User") +
+    ggtitle(paste("YouTube Videos (based on Hlidac Statu database) since", format(start_date, "%d.%m.%Y")))
+)
+
+plot_over_time_yt
+
+htmlwidgets::saveWidget(plot_over_time_yt, file = paste0(directory, "/plot_over_time_yt.html"))
 
 ```
 
