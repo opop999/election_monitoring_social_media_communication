@@ -37,7 +37,7 @@ get_all_twitter <- function(server, users, start_date, end_date, dir_name, upper
   get_all_tweets(users = users,
                  start_tweets = paste0(start_date, "T00:00:00Z"),
                  end_tweets = paste0(end_date, "T00:00:00Z"),
-                 is_retweet	= FALSE,
+                 is_retweet	= NULL, # TRUE means only, FALSE means exclude, NULL means include as well
                  data_path = paste0(dir_name, "/json/"),
                  export_query = FALSE,
                  n = upper_limit,
@@ -50,9 +50,9 @@ get_all_twitter <- function(server, users, start_date, end_date, dir_name, upper
   unlink(paste0(dir_name, "/json/"), recursive = TRUE)
 
   # Save to CSV and RDS+Feather for speed
-  saveRDS(all_data, file = paste0(dir_name, "/all_data_", tolower(server), "_test.rds"), compress = FALSE)
-  write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), "_test.feather"))
-  fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), "_test.csv"))
+  saveRDS(all_data, file = paste0(dir_name, "/all_data_", tolower(server), "_test_retweet.rds"), compress = FALSE)
+  write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), "_test_retweet.feather"))
+  fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), "_test_retweet.csv"))
 
 }
 

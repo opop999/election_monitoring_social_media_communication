@@ -45,7 +45,7 @@ all_data_facebook <- readRDS(paste0(dir_name, "/all_data_facebook.rds"))
 all_data_youtube <- readRDS(paste0(dir_name, "/all_data_youtube.rds"))
 all_data_twitter <- readRDS(paste0(dir_name, "/all_data_twitter.rds"))
 
-## 2. Creating a summary table with total activity per page
+## 2.1 Creating a summary table with total activity per page for Facebook data
 total_summary_fb <- all_data_facebook %>%
   left_join(all_data_facebook_ads, by = c("text" = "ad_creative_body"), keep = TRUE) %>%
   transmute(
@@ -64,6 +64,8 @@ total_summary_fb <- all_data_facebook %>%
    ungroup() %>%
   arrange(desc(total_posts))
 
+## 2.2 Creating a summary table with total activity per page for YouTube data
+
 total_summary_yt <- all_data_youtube %>%
   transmute(
     entity_name = as.factor(osobaid),
@@ -74,23 +76,31 @@ total_summary_yt <- all_data_youtube %>%
   arrange(desc(total_posts)) %>%
   ungroup()
 
+
+## 2.3 Creating a summary table with total activity per page for Twitter data
+
 total_summary_tw <- all_data_twitter %>%
+ # filter(!sourcetweet_type %in% c("retweeted")) %>% # Optional filtering out retweets
   transmute(
     entity_name = as.factor(user_username),
     entity_id = as.factor(author_id),
     date = format(as.Date(created_at), format = "%Y-%m-%d"),
-    interactions = (retweet_count + like_count + quote_count),
+    is_retweet = ifelse(sourcetweet_type %in% c("retweeted"), 1, 0),
+    # only count interactions when tweet is not a retweet - social stats belong to the original poster
+    interactions = ifelse(is_retweet == 0, retweet_count + like_count + quote_count, 0),
     followers_thousands = user_followers_count / 1000,
-    source_iphone = ifelse(source == "Twitter for iPhone", 1, 0),
-    source_android = ifelse(source == "Twitter for Android", 1, 0),
-    source_web = ifelse(source == "Twitter Web App", 1, 0),
-    source_tweet_deck = ifelse(source == "TweetDeck", 1, 0),
-    source_ipad = ifelse(source == "Twitter for iPad", 1, 0),
-    source_media_studio = ifelse(source == "Twitter Media Studio", 1, 0)
+    source_iphone = ifelse(source %in% c("Twitter for iPhone"), 1, 0),
+    source_android = ifelse(source %in% c("Twitter for Android"), 1, 0),
+    source_web = ifelse(source %in% c("Twitter Web App"), 1, 0),
+    source_tweet_deck = ifelse(source %in% c("TweetDeck"), 1, 0),
+    source_ipad = ifelse(source %in% c("Twitter for iPad"), 1, 0),
+    source_media_studio = ifelse(source %in% c("Twitter Media Studio"), 1, 0)
   ) %>%
   group_by(entity_name, entity_id) %>%
   summarise(
-    total_posts = n(),
+  	total_posts_and_retweets = n(),
+    total_posts = sum(is_retweet == 0),
+    total_retweets = sum(is_retweet == 1),
     total_followers_thousands = round(max(followers_thousands), digits = 0),
     total_interactions_thousands = round(sum(interactions) / 1000, digits = 0),
     total_source_iphone = sum(source_iphone),
@@ -103,7 +113,7 @@ total_summary_tw <- all_data_twitter %>%
   arrange(desc(total_posts)) %>%
   ungroup()
 
-# 3. Creating a summary table with activity per page throughout time
+# 3.1. Creating a summary table with activity per page throughout time for Facebook data
 time_summary_fb <- all_data_facebook %>%
   left_join(all_data_facebook_ads, by = c("text" = "ad_creative_body"), keep = TRUE) %>%
   transmute(
@@ -120,6 +130,7 @@ time_summary_fb <- all_data_facebook %>%
   ungroup() %>%
   arrange(desc(date))
 
+# 3.2. Creating a summary table with activity per page throughout time for YouTube data
 time_summary_yt <- all_data_youtube %>%
   transmute(
     entity_name = as.factor(osobaid),
@@ -132,22 +143,29 @@ time_summary_yt <- all_data_youtube %>%
   ungroup() %>%
   arrange(desc(date))
 
+# 3.3. Creating a summary table with activity per page throughout time for Twitter data
 time_summary_tw <- all_data_twitter %>%
   transmute(
     entity_name = as.factor(user_username),
     entity_id = as.factor(author_id),
     date = format(as.Date(created_at), format = "%Y-%m-%d"),
-    interactions = (retweet_count + like_count + quote_count),
+    is_retweet = ifelse(sourcetweet_type %in% c("retweeted"), 1, 0),
+    # only count interactions when tweet is not a retweet - social stats belong to the original poster
+    interactions = ifelse(is_retweet == 0, retweet_count + like_count + quote_count, 0),
     followers_thousands = user_followers_count / 1000
   ) %>%
   group_by(entity_name, date) %>%
   summarise(
-    posts_in_day = n(),
+    posts_and_retweets_in_day = n(),
+    posts_in_day = sum(is_retweet == 0),
+    retweets_in_day = sum(is_retweet == 1),
     interactions_in_day = sum(interactions)
   ) %>%
   arrange(date) %>%
   mutate(
-    cumulative_posts = cumsum(posts_in_day),
+  	cumulative_posts_and_retweets = cumsum(posts_and_retweets_in_day),
+  	cumulative_posts = cumsum(posts_in_day),
+    cumulative_retweets = cumsum(retweets_in_day),
     cumulative_interactions_thousands = round(cumsum(interactions_in_day) / 1000, digits = 1)
   ) %>%
   ungroup() %>%

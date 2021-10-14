@@ -84,15 +84,15 @@ yt_posts_yesterday <- function(server, start_date, end_date, dir_name, sort, des
         tags = map_chr(tags, paste0, collapse = " ")
       )
 
-    # We are saving the merged dataframes with yesterday's data as CSV and RDS file (for speed in R)
-    fwrite(x = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".csv"))
-    saveRDS(object = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".rds"), compress = FALSE)
+    # # We are saving the merged dataframes with yesterday's data as CSV and RDS file (for speed in R)
+    # fwrite(x = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".csv"))
+    # saveRDS(object = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".rds"), compress = FALSE)
 
     # Load in the existing full dataset merge with yesterday's new data
     all_data <- readRDS(paste0(dir_name, "/all_data_", tolower(server), ".rds"))
 
-    # Append the existing dataset with new rows from yesterday and delete duplicates
-    all_data <- bind_rows(yesterday_data, all_data) %>% distinct()
+    # Append the existing dataset with new rows from yesterday and delete duplicates using column "id"
+    all_data <- bind_rows(yesterday_data, all_data) %>% distinct(id, .keep_all = TRUE)
 
     # Save full dataset again both in CSV, RDS and also Arrow/Feather binary format
     saveRDS(object = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)

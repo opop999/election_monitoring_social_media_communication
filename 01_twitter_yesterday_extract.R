@@ -31,7 +31,7 @@ get_yesterday_twitter <- function(server, users, start_date, end_date, dir_name,
 get_all_tweets(users = users,
 							 start_tweets = paste0(start_date, "T00:00:00Z"),
 							 end_tweets = paste0(end_date, "T00:00:00Z"),
-							 is_retweet	= FALSE,
+							 is_retweet	= NULL,
 							 data_path = paste0(dir_name, "/json/"),
 							 export_query = FALSE,
 							 n = upper_limit,
@@ -43,9 +43,9 @@ yesterday_data <- bind_tweets(paste0(dir_name, "/json/"), output_format = "tidy"
 	# Delete unneeded JSON repository
 	unlink(paste0(dir_name, "/json/"), recursive = TRUE)
 
-	# We are saving the merged dataframes with yesterday's data as CSV and RDS file (for speed in R)
-	fwrite(x = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".csv"))
-	saveRDS(object = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".rds"), compress = FALSE)
+	# # We are saving the merged dataframes with yesterday's data as CSV and RDS file (for speed in R)
+	# fwrite(x = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".csv"))
+	# saveRDS(object = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".rds"), compress = FALSE)
 
 	# Load in the existing full dataset merge with yesterday's new data
 	all_data <- readRDS(paste0(dir_name, "/all_data_", tolower(server), ".rds"))
@@ -61,7 +61,7 @@ yesterday_data <- bind_tweets(paste0(dir_name, "/json/"), output_format = "tidy"
 
 ## 3. Inputs for the function
 
-start_date <- format(Sys.Date() - 8, format = "%Y-%m-%d") # YYYY-MM-DD or "*" to include everything until the end/beginning
+start_date <- "2021-01-01" # format(Sys.Date() - 8, format = "%Y-%m-%d") # or "*" to include everything until the end/beginning
 
 end_date <- format(Sys.Date(), format = "%Y-%m-%d")  # Same as start_date
 
