@@ -5,7 +5,7 @@ name: Extraction of social media political posts with Docker Image
 # Controls when the action will run.
 on:
   schedule:
-    - cron:  '00 17 * * *'
+    - cron:  '00 13 * * *'
   push:
     branches: main
 
