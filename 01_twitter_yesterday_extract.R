@@ -48,12 +48,15 @@ yesterday_data <- bind_tweets(paste0(dir_name, "/json/"), output_format = "tidy"
 	# saveRDS(object = yesterday_data, file = paste0(dir_name, "/yesterday_data_", tolower(server), ".rds"), compress = FALSE)
 
 	# Load in the existing full dataset merge with yesterday's new data
-	all_data <- readRDS(paste0(dir_name, "/all_data_", tolower(server), ".rds"))
+	# all_data <- readRDS(paste0(dir_name, "/all_data_", tolower(server), ".rds"))
 
 	# Append the existing dataset with new rows from yesterday and delete duplicates
-	all_data <- bind_rows(yesterday_data, all_data) %>% distinct()
+	# all_data <- bind_rows(yesterday_data, all_data) %>% distinct()
 
-	saveRDS(object = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = FALSE)
+	# We are currently getting all of the tweets and we are not appending to older dataset
+	all_data <- yesterday_data
+
+	saveRDS(object = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".rds"), compress = TRUE)
 	write_feather(x = all_data, sink = paste0(dir_name, "/all_data_", tolower(server), ".feather"))
 	fwrite(x = all_data, file = paste0(dir_name, "/all_data_", tolower(server), ".csv"))
 
