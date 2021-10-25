@@ -76,7 +76,7 @@ plot_summary_dataset_tw_tweets <- ggplotly(
     summary_dataset_tw %>%
   	pivot_longer(cols = c("total_posts",
                             "total_retweets"), names_to = "type", values_to = "tweets_type_count") %>%
-  	mutate(type = factor(type, levels = c("total_posts", "total_retweets"), labels = c("Original Posts", "Retweets"))) %>% 
+  	mutate(type = factor(type, levels = c("total_retweets", "total_posts"), labels = c("Retweets", "Original Posts"))) %>% 
     ggplot(aes(x = tweets_type_count, y = reorder(entity_name, total_posts_and_retweets), fill = type)) +
     geom_col() +
     scale_x_continuous(
