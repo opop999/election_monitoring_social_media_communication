@@ -1,5 +1,9 @@
 entity_name,date,posts_in_day,cumulative_posts
-andrej-babis,2021-11-09,3,228
+andrej-babis,2021-11-11,3,240
+tomio-okamura,2021-11-11,1,431
+andrej-babis,2021-11-10,8,237
+tomio-okamura,2021-11-10,1,430
+andrej-babis,2021-11-09,4,229
 tomio-okamura,2021-11-09,1,429
 andrej-babis,2021-11-08,1,225
 tomio-okamura,2021-11-08,2,428
