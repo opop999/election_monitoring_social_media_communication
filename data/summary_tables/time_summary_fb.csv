@@ -1,9 +1,15 @@
 entity_name,date,posts_in_day,sponsored_posts_in_day,cumulative_posts,cumulative_sponsored_posts
+jan-farsky,2021-11-19,1,0,164,2
+tomio-okamura,2021-11-18,1,0,1749,1021
+milos-zeman,2021-11-17,1,0,159,0
 petr-fiala,2021-11-17,2,0,890,141
 alexandra-udzenija,2021-11-16,1,0,163,0
 andrej-babis,2021-11-15,1,0,1219,59
 petr-fiala,2021-11-14,1,0,888,141
+tomio-okamura,2021-11-14,1,1,1748,1021
 alexandra-udzenija,2021-11-13,1,0,162,0
+tomio-okamura,2021-11-13,3,2,1747,1020
+jan-farsky,2021-11-12,1,0,163,2
 petr-fiala,2021-11-12,1,0,887,141
 tomio-okamura,2021-11-12,2,0,1744,1018
 alexandra-udzenija,2021-11-11,1,0,161,0
