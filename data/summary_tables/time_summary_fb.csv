@@ -1,4 +1,11 @@
 entity_name,date,posts_in_day,sponsored_posts_in_day,cumulative_posts,cumulative_sponsored_posts
+andrej-babis,2021-11-27,1,0,1225,59
+andrej-babis,2021-11-26,1,0,1224,59
+martin-kupka,2021-11-26,1,0,261,47
+andrej-babis,2021-11-25,2,0,1223,59
+martin-kupka,2021-11-24,1,0,260,47
+andrej-babis,2021-11-23,2,0,1221,59
+martin-kupka,2021-11-21,1,0,259,47
 martin-kupka,2021-11-20,1,0,258,47
 jan-farsky,2021-11-19,1,0,164,2
 tomio-okamura,2021-11-18,1,0,1749,1021
